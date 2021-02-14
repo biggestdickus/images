@@ -1,0 +1,619 @@
+* {
+	margin: 0;
+	padding: 0;
+}
+html, body {
+  overflow-y: hidden;
+  min-height: 110%; /*so we can hide the address bar in Chrome android*/
+  user-select: none;
+}
+
+body {
+  font-family: Cambria, Times, "Times New Roman", serif;
+  font-size: 15px;
+  background: #0A0A0A;
+}
+.centerDiv {
+  transform: translateZ(0);
+  transform-style: preserve-3d;
+	position: absolute;
+	margin: auto;
+	bottom: 0;
+	left: 0;
+	top: 0;
+	right: 0;
+  width: 890px;
+  height: 500px;
+}
+#VideoFrame {
+  background: black;
+  overflow: hidden;
+  z-index: 0;
+}
+#stars {
+  width: 890px;
+  height: 250px;
+  background: black url("stars.png") no-repeat top center;
+  z-index: 1;
+}
+#cloudsContainer {
+  position: absolute;
+	bottom: 0;
+  width: 890px;
+  height: 250px;
+  background: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,179,255,1) 40%, rgba(0,179,255,1) 100%);
+  z-index: 2;
+}
+#clouds {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 160px;
+  width: 890px;
+  background-image: url(cloud1.png), url(cloud2.png), url(cloud3.png);
+  animation: clouds 120s linear infinite;
+  overflow: hidden;
+}
+@keyframes clouds {
+  from { background-position: 890px 0px, 890px 0px, 890px 0px; }
+  to { background-position: 0px 0px, -445px 0px, -890px 0px; }
+}
+#earlyMorning {
+  position: absolute;
+  top: 0px;
+  width: 890px;
+  height: 250px;
+  opacity: 0;
+  background: url("earlyMorning.jpg") no-repeat;
+  z-index: 10;
+}
+#halfDay {
+  position: absolute;
+  top: 0px;
+  width: 890px;
+  height: 250px;
+  opacity: 0;
+  background: url("halfDay.jpg") no-repeat;
+  z-index: 20;
+}
+#moonContainer {
+  overflow: hidden;
+  z-index: 30;
+}
+#moon, #sun {
+  position: absolute;
+  top: 250px;
+  left: 445px;
+  width: 150px;
+  height: 150px;
+}
+#moon {
+  background: transparent url('moon.png') no-repeat;
+  opacity: 0;
+  animation: moon 10s linear infinite;
+  animation-play-state: paused;
+}
+#sun {
+  background: transparent url('sun.png') no-repeat;
+  opacity: .5;
+  animation: sun 10s linear infinite;
+  animation-play-state: paused;
+}
+@keyframes moon {
+	0% { 	transform: rotate(0deg) translateX(200px) rotate(0deg); }
+  10% { opacity: 0; }
+  50% { opacity: 0; }
+  80% { opacity: 1; }
+	100% { transform: rotate(360deg) translateX(200px) rotate(-360deg); }
+}
+@keyframes sun {
+	0% { 	transform: rotate(0deg) translateX(200px) rotate(360deg); }
+  10% { opacity: 1; }
+  60% { opacity: 0; }
+  93% { opacity: 0; }
+	100% { transform: rotate(360deg) translateX(200px) rotate(-360deg); }
+}
+.lasso {
+  position: absolute;
+  top: 100px;
+  left: 580px;
+  width: 150px;
+  height: 300px;
+  background: url(lasso.png) no-repeat;
+  opacity: 0;
+  animation: lasso 5s linear 1;
+  animation-play-state: paused;
+  transform-style: preserve-3d;
+  z-index: 40;
+}
+@keyframes lasso {
+  0% { opacity: 0 }
+  50% { opacity: 1 }
+  100% { transform: translate(100%) }
+}
+#halfWorld {
+  position: absolute;
+  top: 0px;
+  width: 890px;
+  height: 250px;
+  opacity: 0;
+  background: url("halfWorld.jpg") no-repeat;
+  z-index: 60;
+}
+#daylight {
+  position: absolute;
+  top: 0px;
+  width: 890px;
+  height: 250px;
+  opacity: 0;
+  background: url("daylight.jpg") no-repeat;
+  z-index: 70;
+}
+#earthshadow {
+  position: absolute;
+	margin: auto;
+	bottom: 0;
+	left: 0;
+	top: 0;
+	right: 0;
+  width: 300px;
+  height: 300px;
+  background: url("earthshadow.png") no-repeat top center;
+  opacity: 0;
+  z-index: 71; 
+}
+#rocket {
+  position: absolute;
+  left: -200px;
+  top: 50px;
+  width: 150px;
+  height: 50px;
+  background: url("flyby.png") no-repeat top center;
+  opacity: 0;
+  transform-style: preserve-3d;
+  z-index: 72;
+}
+.flyRight {
+  animation: flyRight 3s linear 1;
+  animation-play-state: paused;
+}
+@keyframes flyRight {
+  0% { opacity: 0 }
+  50% { opacity: 1 }
+  100% { transform: translate(1200px); }
+}
+#earthContainer {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  margin-top: -212px;
+  margin-left: -212px;
+	width: 425px;
+	height: 425px;
+  opacity: 1;
+  animation: earthRotate 25s linear infinite;
+  animation-play-state: running;
+  z-index: 80;
+}
+#earth1, #earth2, #earth3 {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 425px;
+	height: 425px;
+}
+#earth2 {
+  opacity: 0;
+	background: transparent url('earth2.png') no-repeat;
+  z-index: 81;
+}
+#earth1 {
+  opacity: 1;
+  background: transparent url('earth1.png') no-repeat;
+  z-index: 82;
+}
+@keyframes earthRotate {
+  from{transform:rotate(0deg);}
+  to{transform:rotate(360deg);}
+}
+#skylineNight {
+  position: absolute;
+  top: 500px;
+  left: 0px;
+  width: 890px;
+  height: 340px;
+  opacity: 0;
+  background: url("skylineNight.png");
+  z-index: 90;
+}
+#easternWay {
+  position: absolute;
+  top: 500px;
+  left: 0px;
+  width: 890px;
+  height: 340px;
+  background: url("easternWay.png");
+  z-index: 100;
+}
+@keyframes floatUp {
+  0% { opacity: 1 }
+  50% { opacity: 1 }
+  100% { top: 160px }
+}
+.pulseStars {
+  height: 90px;
+  width: 90px;
+  position: absolute;
+  animation: pulsate 3s 1 forwards;
+  animation-play-state: paused; 
+  opacity: 0;
+  background: url("pulseStar.png") no-repeat;
+  z-index: 110;
+}
+#pulseStar1 {
+  left: 40px;
+  top: 140px; 
+}
+#pulseStar2 {
+  left: 200px;
+  top: 100px; 
+}
+#xray {
+  opacity: 0;
+  background: url("xray.png") no-repeat center center;
+  transform-style: preserve-3d;
+  z-index: 120;
+}
+.fade {
+  opacity: 0;
+  animation: fade 5s 1;
+  animation-play-state: paused;
+}
+@keyframes fade {
+  0%, 100% { opacity: 0 }
+  40% { opacity: 1 }
+  80% { opacity: 1 }
+}
+#sunSymbol {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  margin-top: -250px;
+  margin-left: -250px;
+  width: 500px;
+  height: 500px;
+  opacity: 0;
+  background: url("sunSymbol.png") no-repeat center center;
+  animation: earthRotate 25s linear infinite;
+  animation-play-state: paused;
+  z-index: 130;
+}
+#girl {
+  position: absolute;
+  left: 50%;
+  margin-left: -212px;
+	width: 425px;
+	height: 425px;
+  top: 160px;
+  width: 400px;
+  height: 340px;
+  background: url("girl.png");
+  opacity: 0;
+  z-index: 140;
+}
+.slidesScene1, .slidesScene2, .slidesScene3, .slidesScene4, .slidesScene5 {
+  position :absolute;
+  top:0px;
+  opacity : 0;
+}
+.slidesScene1 {
+  z-index: 150;
+}
+.slidesScene2 {
+  z-index: 151;
+}
+.slidesScene3 {
+  z-index: 152;
+}
+.slidesScene4 {
+  z-index: 153;
+}
+.slidesScene5 {
+  z-index: 154;
+}
+#bird {
+  position:absolute;
+  left: -100px;
+  top: 100px;
+  height: 160px;
+  width: 150px;
+  animation: bird 3s 1 ease-in forwards;
+  animation-play-state: paused;
+  opacity: 0;
+  z-index: 155;
+}
+@keyframes bird {
+  0%   { left: -100px; transform:scale3d(.1,.1,1) }
+  100% { left: 100%; top:0px; transform:scale3d(1,1,1) }
+}
+#crow {
+  height: 160px;
+  width: 150px;
+  background: url("crow.png") no-repeat;
+  animation: crow 1s steps(12) 4;
+  animation-play-state: paused;
+}
+@keyframes crow {
+  from { background-position: 0px; }
+  to { background-position: -1800px; }
+}
+#spaceship1 {
+  position: absolute;
+	left: -200px;
+	top: 50px;
+  width: 150px;
+  height: 50px;
+  background: url(spaceship1.png) no-repeat;
+  animation: spaceship1 2.5s linear 1;
+  animation-play-state: paused;
+  z-index:  160;
+}
+#spaceship2 {
+  position: absolute;
+	left: -200px;
+	top: 50px;
+  width: 100px;
+  height: 50px;
+  background: url(spaceship2.png) no-repeat;
+  animation: spaceship2 2s linear 1;
+  animation-play-state: paused;
+  z-index: 161;
+}
+@keyframes spaceship1 {
+  0% { transform: translate(-200px); opacity: 1 }
+  50% { opacity: 1 }
+  100% { transform: translate(1200px); }
+}
+@keyframes spaceship2 {
+  0% { transform: translate(1200px); opacity: 1 }
+  50% { opacity: 1 }
+  100% { transform: translate(0); }
+}
+#earth3 {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  margin-top: -212px;
+  margin-left: -212px;
+	width: 425px;
+	height: 425px;
+  opacity: 0;
+	background: transparent url('earth3.png') no-repeat;
+  animation: earthRotate 25s linear infinite;
+  animation-play-state: paused;
+  z-index: 200;
+}
+.spotlights {
+	position: absolute;
+	width: 80px;
+	height: 500px;
+  opacity: 0;
+  z-index: 300;
+}
+#spot1 {
+  top: 40px;
+	left: 400px;
+	animation: spot1 2s infinite;
+  transform-origin: 50% top;
+	background: url("spotlight1.png") no-repeat;
+  animation-play-state: paused;
+  z-index: 301
+}
+#spot2 {
+  top: 40px;
+	left: 400px;
+	animation: spot2 3s infinite;
+  transform-origin: 50% top;
+	background: url("spotlight2.png") no-repeat;
+  animation-play-state: paused;
+  z-index: 302
+}
+#spot3 {
+  bottom: 40px;
+	left: 400px;
+	animation: spot3 5s infinite;
+  transform-origin: 50% bottom;
+	background: url("spotlight3.png") no-repeat;
+  animation-play-state: paused;
+  z-index: 303
+}
+@keyframes spot1 {
+  0%, 100%  { 
+    transform: rotate(30deg);
+  }
+  50% {
+    transform: rotate(-30deg);
+  }
+}
+@keyframes spot2 {
+  0, 100%  { 
+    transform: rotate(-30deg);
+  }
+  50% {
+    transform: rotate(30deg);
+  }
+}
+@keyframes spot3 {
+  0%, 100%  {
+    transform: rotate(-180deg);
+  }
+  50% {
+    transform: rotate(90deg);
+  }
+}
+#tvContainer {
+  opacity: 0;
+  z-index: 400;
+}
+#tvY {
+  transform-origin : 50% 50%; 
+  background: white;
+  animation: tvY .5s linear 1 forwards;
+  animation-delay: 0;
+  animation-play-state: paused;
+}
+#tvX {
+  transform-origin : 50% 50%; 
+  background: black;
+  animation: tvX .5s linear 1 forwards; 
+  animation-delay: .5s;
+  animation-play-state: paused;
+}
+#lyrics {
+  position: absolute;
+  left: 0px;
+  bottom: 0;
+  width: 890px;
+  height: 50px;
+  opacity: 0;
+  font: italic normal 28px Cambria, Times, "Times New Roman", serif;
+  text-shadow: 2px 2px 3px #333333;
+  text-align: center;
+  line-height: 28px;
+  color: white;
+  animation: lyrics 2s linear 1;
+  animation-play-state: paused;
+  transform-style: preserve-3d;
+  z-index: 500;
+}
+@keyframes pulsate {
+  0% {transform: scale(0.1, 0.1) rotate(0deg); opacity: 0;}
+  50% {opacity: 1;}
+  96%, 100%  {transform: scale(1.2, 1.2) rotate(90deg); opacity: 0;}
+}
+@keyframes lyrics {
+  0%, 100% { opacity: 0 }
+  20% { opacity: 1 }
+  80% { opacity: 1 }
+}
+@keyframes tvY {
+	0% { 	transform : scaleY(1); }
+	100%   {  transform : scaleY(0.002); }
+}
+@keyframes tvX {
+	0% { 	transform : scaleX(1); }
+	100%   {  transform : scaleX(0.002); opacity: 0; }
+}
+#slide1 {
+	transition-duration: 5s; transform: scale(1.0); transform-origin: 50% 50%;
+}
+#slide1b {
+	transition-duration: 5s; transform: scale(1.0); transform-origin: top left;
+}
+#slide1c {
+	transition-duration: 5s; transform: scale(1.0); transform-origin: bottom right;
+}
+#slide2 {
+	transition-duration: 5s; transform: scale(1.0); transform-origin: top left;
+}
+#slide2b {
+	transition-duration: 5s; transform: scale(1.0); transform-origin: bottom left;
+}
+#slide3 {
+	transition-duration: 5s; transform: scale(1.0); transform-origin: bottom right;
+}
+#slide3a {
+	transition-duration: 5s; transform: scale(1.0); transform-origin: top left;
+}
+#slide3b {
+	transition-duration: 3s; transform: scale(1.0); transform-origin: top right;
+}
+#slide3c {
+	transition-duration: 2s; transform: scale(1.0); transform-origin: bottom left; 
+}
+
+#slide4 {
+	transition-duration: 5s; transform: scale(1.0); transform-origin: 50% 50%;
+}
+#slide4b {
+	transition-duration: 5s; transform: scale(1.0); transform-origin: top left;
+}
+#slide4c {
+	transition-duration: 5s; transform: scale(1.0); transform-origin: bottom right;
+}
+#slide5 {
+	transition-duration: 5s; transform: scale(1.0); transform-origin: top left;
+}
+#slide5b {
+	transition-duration: 5s; transform: scale(1.0); transform-origin: top right;
+}
+#slide6a {
+	transition-duration: 3s; transform: scale(1.0); transform-origin: top left;
+}
+#slide6b {
+	transition-duration: 3s; transform: scale(1.0); transform-origin: top right;
+}
+#slide6c {
+	transition-duration: 3s; transform: scale(1.0); transform-origin: bottom left;
+}
+
+/* Scene 3 Solo  */
+#slide7 {
+	transition-duration: 3s; transform: scale(.8); transform-origin: bottom left;
+}
+#slide7b {
+	transition-duration: 5s; transform: scale(1.0); transform-origin: top right;
+}
+#slide7c {
+	transition-duration: 5s; transform: scale(1.0); transform-origin: 50% 50%;
+}
+#slide7d {
+	transition-duration: 5s; transform: scale(1.0); transform-origin: top left;
+}
+#slide7e {
+	transition-duration: 5s; transform: scale(1.0); transform-origin: bottom right;
+}
+#slide7f {
+	transition-duration: 5s; transform: scale(1.0); transform-origin: 50% 50%;
+}
+#slide7g {
+	transition-duration: 5s; transform: scale(1.0); transform-origin: top left;
+}
+#slide7h {
+	transition-duration: 5s; transform: scale(1.0); transform-origin: bottom right;
+}
+
+/* Scene 4 Verse 3 */
+#slide8 {
+	transition-duration: 3s; transform: scale(1.0); transform-origin: bottom left;
+}
+#slide9 {
+	transition-duration: 4s; transform: scale(1.0); transform-origin: top right;
+}
+#slide10 {
+	transition-duration: 4s; transform: scale(1.0); transform-origin: 50% 50%;
+}
+#slide11 {
+	transition-duration: 4s; transform: scale(1.0); transform-origin: top left;
+}
+/* Scene 5 short instrumental */
+#slide12 {
+	transition-duration: 5s; transform: scale(1.0); transform-origin: bottom left;
+}
+#slide12b {
+	transition-duration: 4s; transform: scale(1.0); transform-origin: top right;
+}
+#slide12c {
+	transition-duration: 4s; transform: scale(1.0); transform-origin: 50% 50%;
+}
+#slide12d {
+	transition-duration: 4s; transform: scale(1.0); transform-origin: top left;
+}
+#BigPlayBtn {
+  display: block;
+  width: 200px;
+  height: 200px;
+  background: url("BigPlayBtn.png") no-repeat;
+  cursor: pointer;
+  z-index: 1000;
+}

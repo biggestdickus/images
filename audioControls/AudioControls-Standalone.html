@@ -1,0 +1,116 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="utf-8" />
+<title>Audio Controls</title>
+<link href="AudioControls-Standalone.css" rel="stylesheet" type="text/css" />
+<script src="../jquery-1.11.2.min.js" type="text/javascript"></script>
+<script>
+var audio, playbtn, mutebtn, seekslider, volumeslider, seeking=false, seekto, curtimetext, durtimetext, volume=false;
+$(document).ready(function () {
+  $(document).on("mouseup", function (evt) {
+    seeking=false, volume=false;
+  })
+}); // end jquery ready
+
+function initAudioPlayer() {
+	audio = new Audio();
+	audio.src = "../Someone.mp3";
+	audio.loop = false;
+	playbtn = document.getElementById("playBtn");
+	mutebtn = document.getElementById("mutebtn");
+	seekslider = document.getElementById("seekslider");
+	volumeslider = document.getElementById("volumeslider");
+	curtimetext = document.getElementById("curtimetext");
+	durtimetext = document.getElementById("durtimetext");
+	playbtn.addEventListener("click",playPause);
+	mutebtn.addEventListener("click", mute);
+	seekslider.addEventListener("mousedown", function(event){ seeking=true; seek(event); });
+	seekslider.addEventListener("mousemove", function(event){ seek(event); });
+	seekslider.addEventListener("mouseup",function(){ seeking=false; });
+  
+	volumeslider.addEventListener("mousedown", function(event){ volume=true; seek(event); });
+  volumeslider.addEventListener("mousemove",  function() { setvolume(event); }, false);
+	volumeslider.addEventListener("mouseup",function(){ volume=false; });
+
+  audio.addEventListener("timeupdate", function(){ seektimeupdate(); });
+
+function playPause(){
+  if(audio.paused){
+    audio.play();
+    playbtn.style.background = "url(playBtn.png) no-repeat";
+  } else {
+    audio.pause();
+    playbtn.style.background = "url(pauseBtn.png) no-repeat";
+  }
+}
+function mute(){
+  if(audio.muted){
+    audio.muted = false;
+    mutebtn.style.background = "url(speakerBtn.png) no-repeat";
+  } else {
+    audio.muted = true;
+    mutebtn.style.background = "url(speakerMute.png) no-repeat";
+  }
+}
+function seek(event) {
+  if(seeking) {
+    offset=$('#seekslider').offset().left;
+    var mouseX = event.clientX - offset;
+    num = ((mouseX - 0)/(1 - 0))/100;
+    normalized = parseFloat(num).toFixed(1);
+    var n = parseInt(num*100)
+    seekslider.value = event.clientX - offset;
+    seekto = audio.duration * (seekslider.value / 100);
+    audio.currentTime = seekto;
+    $('#seekslider').text(parseInt(audio.currentTime)+'s');
+    $('#seekslider').css( {'background':'linear-gradient(to right, #00ffff 0%,#00ffff ' + n + '%,#00ffff ' + n + '%,#636363 ' + n + '%,#636363 100%)' });
+  }
+}
+function setvolume(event) {
+  if(volume) {
+    offset = $('#volumeslider').offset().left;
+    var mouseX = event.clientX - offset;
+    num = ((mouseX - 0)/(1 - 0))/100;
+    normalized = parseFloat(num).toFixed(1);
+    var n = parseInt(num*100)+1
+    $('#volumeslider').text(n);
+    audio.volume = normalized;
+    $('#volumeslider').css( {'background':'linear-gradient(to right, #00ffff 0%,#00ffff ' + n + '%,#00ffff ' + n + '%,#636363 ' + n + '%,#636363 100%)' });
+  }
+}
+function seektimeupdate() {
+  var n = audio.currentTime * (100 / audio.duration);
+  $('#seekslider').text(parseInt(audio.currentTime)+'s');
+  $('#seekslider').css( {'background':'linear-gradient(to right, #00ffff 0%,#00ffff ' + n + '%,#00ffff ' + n + '%,#636363 ' + n + '%,#636363 100%)' });
+  var curmins = Math.floor(audio.currentTime / 60);
+  var cursecs = Math.floor(audio.currentTime - curmins * 60);
+  var durmins = Math.floor(audio.duration / 60);
+  var dursecs = Math.floor(audio.duration - durmins * 60);
+  if(cursecs < 10){ cursecs = "0"+cursecs; }
+  if(dursecs < 10){ dursecs = "0"+dursecs; }
+  if(curmins < 10){ curmins = "0"+curmins; }
+  if(durmins < 10){ durmins = "0"+durmins; }
+  curtimetext.innerHTML = curmins+":"+cursecs;
+  durtimetext.innerHTML = durmins+":"+dursecs;
+}
+} // end initAudioPlayer
+window.addEventListener("load", initAudioPlayer);
+</script>
+</head>
+
+<body>
+
+<div id="controls" onselectstart="return false;">
+  <div id="playBtn"></div>
+  <div id="seekslider"><div id="playhead"></div></div>
+  <div id="timebox">
+    <span id="curtimetext">00:00</span> / <span id="durtimetext">00:00</span>
+  </div>
+  <div id="mutebtn"></div>
+  <div id="volumeslider"></div>
+</div>
+
+</body>
+</html>

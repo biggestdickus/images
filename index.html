@@ -1,0 +1,570 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="utf-8" />
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta content="yes" name="apple-touch-fullscreen" />
+<meta name="description" content="Syncing music to CSS animate requestAnimationFrame" />
+<title>Someone from the Other Side</title>
+<link rel="shortcut icon" type="image/x-icon" href="favicon.ico"/>
+<link href="Someone.css" rel="stylesheet" type="text/css" />
+<link href="AudioControls.css" rel="stylesheet" type="text/css" />
+<script src="jquery-1.11.2.min.js" type="text/javascript"></script>
+<script src="prefixfree.min.js" type="text/javascript"></script>
+<script src="audioControl.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+var playing=false, rAF=false, rafID=0, seek, lastTime= -1, ended=false;
+
+$(document).ready(function () {
+  $(document).on("mouseup", function (evt) { seeking=false, volume=false; })
+  $('#VideoFrame').on("mousedown", function (evt) { 
+    if ($('#BigPlayBtn').css('display')=='none') { $('#BigPlayBtn').css('display',''); playPause(); }
+  })
+  audio.addEventListener("ended", function() { ended=true; });
+}); // end ready
+
+window.requestAnimFrame = function(){
+  return ( window.requestAnimationFrame || window.webkitRequestAnimationFrame || 
+  window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame);
+}();
+var cancelAnimFrame = window.cancelAnimationFrame || window.mozCancelAnimationFrame;
+
+function playAnimation() {  //fired every 10th second.
+  var time = audio.currentTime;
+  
+  if (time !== lastTime) {
+    seek = parseFloat(time.toFixed(1));
+    frame(seek);       
+    lastTime = time;
+  }
+  if (rAF === true) { rafID = requestAnimationFrame(playAnimation); }
+}
+
+function playPause() {
+if (ended==true) { location.reload(); }
+  if (audio.paused){
+    $('#BigPlayBtn').css( {'display':'none'} );
+    audio.play();
+    rAF=true; playAnimation();
+    playbtn.style.background = "url(audioControls/playBtn.png) no-repeat";
+  } else {
+    $('#BigPlayBtn').css( {'display':''} );
+    audio.pause();rAF=false; cancelAnimFrame(rafID);
+    playbtn.style.background = "url(audioControls/pauseBtn.png) no-repeat";
+    //$("div").each(function(){  if ($(this).data("run")=="true") { $(this)[0].style.animationPlayState='paused' }; });
+  }
+}
+
+function changeLyrics(sec) {
+  str = 'lyrics '+ sec + ' linear 1';
+  $('#lyrics').css( 'animation', str);
+  $('#lyrics').css( 'animation-play-state', 'running' );
+  resetAnimation('lyrics');
+}
+
+function resetAnimation(elm) {
+  $('#'+elm).replaceWith($('#'+elm).clone(true)); 
+}
+
+function spaceShips(elm,start) {
+  $('#'+elm).css( {left: start, top: Math.floor(Math.random() * 400) });
+  $("#"+elm).css( 'animation-play-state', 'running' );
+  resetAnimation(elm);
+}
+
+function SwitchImages(image1,time1,opacity1,image2,time2,opacity2) {
+  $('#'+image1).css( {'transition': 'opacity ' + time1 + ' ease-in-out', 'opacity': opacity1} );
+  $('#'+image2).css( {'transition': 'opacity ' + time2 + ' ease-in-out', 'opacity': opacity2} );
+}
+
+//Show or hide the audio controls / swipe left or right.
+var hasTouch = 'ontouchstart' in window;
+$(document).on('mousedown touchstart', function(event){ touchStart(event); });
+$(document).on('mousemove touchmove', function(event){ touchMove(event); });
+$(document).on('mouseup touchend', function(event){ touchEnd(event); });
+
+var xDown = null; 
+
+function touchStart(evt) {
+  if (hasTouch) { evt = event.touches[0]; }
+  xDown = evt.clientX;
+};                                                
+
+function touchMove(evt) {
+  if ( ! xDown ) { return; }
+  if (hasTouch) { evt = event.touches[0]; }
+  var xUp = evt.clientX;
+  if ( Math.abs(xUp) < Math.abs(xDown-200) ) { $('#controls').css('display','none'); }
+  if ( Math.abs(xUp) > Math.abs(xDown+200) ) { $('#controls').css('display','block'); }
+};
+function touchEnd(evt) {
+  xDown = null;
+};
+
+//// all CSS animations are rendered here //// 
+function frame(seek) {
+
+  switch(seek) { //verse 1
+    case 0:
+      $("#earthContainer").css( {'transition':'opacity 2s linear', 'opacity':'1'});
+      $("#earthContainer").css( {'animation-play-state':'running'} ).data('run','true'); break;
+    case 6:
+      $('#lyrics').text('Someone from the other side');
+      changeLyrics('3s'); break;
+    case 7:
+      $("#sun").css( 'animation-play-state', 'running' ).data('run','true');
+      $("#moon").css( 'animation-play-state', 'running' ).data('run','true'); break;
+    case 10:
+      spaceShips('spaceship1','-200');
+      $('#lyrics').text('is trying to steal this night away');
+      changeLyrics('4s'); break;
+    case 12:
+      spaceShips('spaceship2','1200'); break;
+    case 13:
+      $('#lyrics').text('They just lassoed the moon');
+      changeLyrics('3s'); break;
+    case 15:
+       resetAnimation('lasso');
+      $("#lasso").css( 'animation-play-state', 'running' ).data('run','true'); break;
+    case 16:
+      $('#lyrics').text("They're trying to haul her away");
+      changeLyrics('4s');
+      spaceShips('spaceship1','-200'); break;
+    case 19:
+      $("#cloudsContainer").css( {'transition':'opacity 3s linear', 'opacity':'0'});
+      SwitchImages('earth1','1s',0,'earth2','3s',1); break;
+    case 20:
+      $('#lyrics').text("And they'll try to blind you with their daylight");
+      changeLyrics('4s'); break;
+     case 21:
+      $("#tvContainer").css( {'transition':'opacity 1s linear', 'opacity':'1'});
+      $("#tvY").css( 'animation-play-state', 'running' );
+      $("#tvX").css( 'animation-play-state', 'running' );
+      resetAnimation('xray');
+      $("#xray").css( 'animation-play-state', 'running' ).data('run','true'); break;
+    case 22:
+      $("#daylight").css( {'transition':'opacity 1s linear', 'opacity':'1'}); break;
+    case 23:
+      $("#daylight").css( {'transition':'opacity 2s linear', 'opacity':'0'});
+      $('#skylineNight').css( {'transition':'top 3s, opacity 8s','top':'160px', 'opacity': '1'});
+      $("#earthContainer").css( {'transition':'opacity 3s linear', 'opacity':'0'}); break;
+    case 24:
+      $("#rocket").css( 'animation-play-state', 'running' );
+      $('#lyrics').text("And they come around every half day");
+      changeLyrics('3s'); break;   
+    case 27:
+      $("#girl").css( {'transition':'opacity 3s linear', 'opacity':'1'});
+      $("#sunSymbol").css( {'transition':'opacity 3s linear', 'opacity':'1'});
+      $("#sunSymbol").css( 'animation-play-state', 'running' ).data('run','true');
+      $('#lyrics').text("Yah, someone from the other side, tryin' to steal this night away");
+      changeLyrics('10s'); break;   
+    case 29:
+      $("#skylineNight").css( {'transition':'top 14s 1s, opacity 3s', 'opacity': '0','top':'500px'}); break;
+    case 32:
+      $("#sunSymbol").css( {'transition':'opacity 3s linear', 'opacity':'0'});
+      $("#earthContainer").css( {'transition':'opacity 3s linear', 'opacity':'1'}); break;
+    case 34:
+      SwitchImages('earth1','5s',1,'earth2','2s',0); break;
+    case 36:
+      $("#earthContainer").css( {'transition':'opacity 3s linear', 'opacity':'0'})
+      $("#moonContainer").css( {'transition':'opacity 3s linear', 'opacity':'0'});
+      spaceShips('spaceship1','-200');
+      spaceShips('spaceship2','1200'); break;
+    case 37:
+       $("#slide1").css({'transform': 'scale(1.2)', 'transform': 'scale(1.2)', opacity: '1' } );
+       $("#girl").css( {'transition':'opacity 4s linear', 'opacity':'0'}); break;
+    case 38:
+      $('#lyrics').text("So gather up the daylight and threw it back their way");
+      changeLyrics('8s');
+      $("#stars").css( {'transition':'opacity 2s linear', 'opacity':'0'}); break;
+    case 41:
+      $("#slide1b").css({'transform': 'scale(1.2)', 'transform': 'scale(1.2)', opacity: '1' } ); break;
+    case 45:
+      $("#slide1c").css({'transform': 'scale(1.2)', 'transform': 'scale(1.2)', opacity: '1' } );
+      $('#lyrics').text("Cause we like the darkness");
+      changeLyrics('4s'); break;
+    case 49:
+      $("#slide2").css({'transform': 'scale(1.2)', 'transform': 'scale(1.2)', opacity: '1' } ); 
+      $('#lyrics').text("At the end of each day");
+      changeLyrics('3s'); break;
+    case 52:
+      $("#slide2b").css({'transform': 'scale(1.2)', 'transform': 'scale(1.2)', opacity: '1' } );
+      $('#lyrics').text("Yah, we like the darkness");
+      changeLyrics('4s'); break;
+    case 56:
+      $("#slide3").css({'transform': 'scale(1.2)', 'transform': 'scale(1.2)', opacity: '1' } );
+      $('#lyrics').text("When they all come out to play");
+      changeLyrics('6s'); break;
+    case 58:
+      $("#slide3b").css({'transform': 'scale(1.2)', 'transform': 'scale(1.2)', opacity: '1' } ); break;
+    case 59:
+      $("#slide3c").css({'transform': 'scale(1.2)', 'transform': 'scale(1.2)', opacity: '1' } ); break;
+ }
+ 
+   switch(seek) { //verse 2
+    case 60:
+      $('.slidesScene1').fadeTo(500,0); //using jQuery which queues fade out nicely
+      $("#cloudsContainer").css( {'transition':'opacity 3s linear', 'opacity':'1'}); break;
+    case 63:
+      $("#stars").css( {'transition':'opacity 2s linear', 'opacity':'1'});
+      $("#earthContainer").css( {'transition':'opacity 2s linear', 'opacity':'1'});
+      $("#moonContainer").css( {'transition':'opacity 3s linear', 'opacity':'1'});
+      $('#lyrics').text('Yah, someone from the other side');
+      changeLyrics('3s'); break;
+    case 66:
+      spaceShips('spaceship1','-200');
+      $('#lyrics').text('is trying to steal this night away');
+      changeLyrics('4s'); break;
+    case 69:
+     spaceShips('spaceship2','1200'); break;
+    case 70:
+      $("#earlyMorning").css( {'transition':'opacity 1s linear', 'opacity':'1'});;
+      $('#lyrics').text('They come early each morning');
+      changeLyrics('3s'); break;
+    case 72:
+      $("#earlyMorning").css( {'transition':'opacity 1s linear', 'opacity':'0'}); break;
+    case 73:
+      $("#halfDay").css( {'transition':'opacity 1s linear', 'opacity':'1'});
+      $('#lyrics').text("Only takes them a half of a day");
+      changeLyrics('4s');
+      spaceShips('spaceship1','-200'); break;
+    case 76:
+      $("#halfDay").css( {'transition':'opacity 3s linear', 'opacity':'0'});
+      $("#cloudsContainer").css( {'transition':'opacity 3s linear', 'opacity':'0'});
+      SwitchImages('earth1','1s',0,'earth2','3s',1); break;
+    case 77:
+      $('#lyrics').text("And they’ll surprised you with their day light");
+      changeLyrics('4s'); break;
+    case 78:
+      resetAnimation('xray');
+      $("#xray").css( 'animation-play-state', 'running' ).data('run','true'); break;
+    case 79:
+      $("#daylight").css( {'transition':'opacity 1s linear', 'opacity':'1'}); break;
+    case 80:
+      $("#daylight").css( {'transition':'opacity 2s linear', 'opacity':'0'});
+      $('#easternWay').css( {'transition':'top 3s, opacity 8s','top':'160px', 'opacity': '1'});
+      $("#earthContainer").css( {'transition':'opacity 3s linear', 'opacity':'0'}); break;
+    case 81:
+      $('#lyrics').text("Sneakin’ up from the eastern way");
+      changeLyrics('3s'); break;   
+    case 84:
+      $('#lyrics').text("Yah, someone from the other side, tryin' to steal this night away");
+      changeLyrics('10s'); break;   
+    case 85:
+      $("#girl").css( {'transition':'opacity 3s linear', 'opacity':'1'}); break;
+    case 86:
+      $("#easternWay").css( {'transition':'opacity 3s linear', 'opacity':'0'});
+      $("#sunSymbol").css( {'transition':'opacity 3s linear', 'opacity':'1'});
+      $("#sunSymbol").css( 'animation-play-state', 'running' );
+      SwitchImages('earth2','1s',0,'earth1','3s',1); break; 
+    case 89:
+      $("#sunSymbol").css( {'transition':'opacity 3s linear', 'opacity':'0'});
+      SwitchImages('earth2','1s',0,'earth1','3s',1);
+      $("#earthContainer").css( {'transition':'opacity 3s linear', 'opacity':'1'}); break;
+    case 93:
+      $("#earthContainer").css( {'transition':'opacity 1s linear', 'opacity':'0'});
+      $("#moonContainer").css( {'transition':'opacity 3s linear', 'opacity':'0'});
+      spaceShips('spaceship1','-200');
+      spaceShips('spaceship2','1200');
+      $("#girl").css( {'transition':'opacity 4s linear', 'opacity':'0'}); break;
+    case 95:
+      $('#lyrics').text("So gather up the daylight and threw it back their way");
+      changeLyrics('7s');
+      $("#stars").css( {'transition':'opacity 2s linear', 'opacity':'0'});
+      $("#slide4").css({'transform': 'scale(1.2)', 'transform': 'scale(1.2)', opacity: '1' } ); break;
+    case 98:
+      $("#slide4b").css({'transform': 'scale(1.2)', 'transform': 'scale(1.2)', opacity: '1' } ); break;
+    case 102:
+      $("#slide4c").css({'transform': 'scale(1.2)', 'transform': 'scale(1.2)', opacity: '1' } );
+      $('#lyrics').text("Cause we like the darkness");
+      changeLyrics('3s'); break;
+    case 105:
+      $("#slide5").css({'transform': 'scale(1.2)', 'transform': 'scale(1.2)', opacity: '1' } ); 
+      $('#lyrics').text("At the end of each day");
+      changeLyrics('4s'); break;
+    case 109:
+      $("#slide5b").css({'transform': 'scale(1.2)', 'transform': 'scale(1.2)', opacity: '1' } );
+      $('#lyrics').text("Yah, we like the darkness");
+      changeLyrics('5s'); break;
+ }
+ 
+    switch(seek) { //verse 3
+    case 111:
+      $('.slidesScene2').fadeTo(500,0); //using jQuery which queues fade out nicely 
+      $("#cloudsContainer").css( {'transition':'opacity 3s linear', 'opacity':'0'});
+      $("#stars").css( {'transition':'opacity 3s linear', 'opacity':'0'});
+      $("#moonContainer").css( {'transition':'opacity 3s linear', 'opacity':'0'});
+      $("#earthContainer").css( {'transition':'opacity 3s linear', 'opacity':'0'}); break;
+    case 112:
+      $('#lyrics').text("When they all come out to play");
+      changeLyrics('7s'); break;
+    case 120:
+      $("#slide7").css({'transform': 'scale(1.0)', 'transform': 'scale(1.0)', opacity: '1' } );
+      $("#spot1,#spot2,#spot3").css( 'animation-play-state', 'running' );
+      $(".spotlights").css( {'transition':'opacity 1s linear', 'opacity':'.5'}); break;
+    case 122:
+      spaceShips('spaceship2','1200');
+      $(".spotlights").css( {'transition':'opacity 3s linear', 'opacity':'0'}); break;
+    case 123:
+      $("#slide7b").css({'transform': 'scale(1.2)', 'transform': 'scale(1.2)', opacity: '1' } ); break;
+    case 125:
+      $("#spot1,#spot2,#spot3").css( {'animation-play-state':'paused'} ); break;
+    case 127:
+      spaceShips('spaceship1','-200');
+      $("#slide7c").css({'transform': 'scale(1.2)', 'transform': 'scale(1.2)', opacity: '1' } ); break;
+    case 130:
+      $("#slide7d").css({'transform': 'scale(1.2)', 'transform': 'scale(1.2)', opacity: '1' } ); break;
+    case 133:
+      $("#slide7e").css({'transform': 'scale(1.2)', 'transform': 'scale(1.2)', opacity: '1' } ); break;
+    case 136:
+      spaceShips('spaceship1','-200');
+      spaceShips('spaceship2','1200');
+      $("#slide7f").css({'transform': 'scale(1.2)', 'transform': 'scale(1.2)', opacity: '1' } ); break;
+    case 138:
+      $("#slide7g").css({'transform': 'scale(1.2)', 'transform': 'scale(1.2)', opacity: '1' } ); break;      
+    case 141:
+      $("#slide7h").css({'transform': 'scale(1.2)', 'transform': 'scale(1.2)', opacity: '1' } );
+      SwitchImages('earth1','1s',0,'earth2','3s',1);
+      $("#earthContainer").css( {'transition':'opacity 2s linear', 'opacity':'1'}); break;
+    case 143: // verse 3
+      $("#slide8").css({'transform': 'scale(1.2)', 'transform': 'scale(1.2)', opacity: '.7' } ); //fadein 8
+      $('.slidesScene3').fadeTo(1,0); //using jQuery which queues fade out nicely 
+      $("#stars").css( {'transition':'opacity 3s linear', 'opacity':'1'}); break;
+    case 144:
+      $('#lyrics').text("Yah, someone from the other side, tryin' to steal away our night");
+      changeLyrics('7s'); break;
+    case 149:
+      spaceShips('spaceship1','-200'); break;    
+    case 151:$("#slide8").css({'transform': 'scale(1.2)', 'transform': 'scale(1.2)', opacity: '0' } ); //fadeout 8
+      $("#slide9").css({'transform': 'scale(1.0)', 'transform': 'scale(1.2)', opacity: '1' } ); //fadein 9
+      $('#lyrics').text("We got to take back the stars they stole");
+      changeLyrics('4s'); break;
+    case 154:
+      $("#slide9").css({'transform': 'scale(1.0)', 'transform': 'scale(1.0)', opacity: '0' } ); //fadeout 9
+      $("#halfWorld").css( {'transition':'opacity 4s linear', 'opacity':'1'});
+      spaceShips('spaceship2','1200'); break;
+    case 155:
+      $('#lyrics').text("A half a world away");
+      changeLyrics('4s'); break;
+    case 158:
+      $("#halfWorld").css( {'transition':'opacity 4s linear', 'opacity':'0'});
+      $('#lyrics').text("Got to place them back, one by one");
+      changeLyrics('4s'); break;
+    case 160:
+      $("#pulseStar1").css( 'animation-play-state', 'running' ); break;
+    case 161:
+      $("#pulseStar2").css( 'animation-play-state', 'running' ); break;
+    case 162:
+      $("#slide10").css({'transform': 'scale(1.0)', 'transform': 'scale(1.2)', opacity: '1' } );
+      $('#lyrics').text("Then give them back their light");
+      changeLyrics('3s'); break;
+    case 165:
+      $("#slide11").css({'transform': 'scale(1.0)', 'transform': 'scale(1.0)', opacity: '1' } );
+      $("#slide10").css({'transform': 'scale(1.0)', 'transform': 'scale(1.0)', opacity: '0' } );
+      $('#lyrics').text("Cause, someone from the other side has stolen away our night");
+      changeLyrics('8s'); break;
+    case 170:
+      $("#slide11").css({'transform': 'scale(1.0)', 'transform': 'scale(1.2)', opacity: '0' } ); break;
+    case 176: //short instrumental
+      $("#earthContainer").css( {'transition':'opacity 3s linear', 'opacity':'0'});
+      $("#earth2").css( {'transition':'opacity 1s linear', 'opacity':'0'});
+      $("#earth3").css( 'animation-play-state', 'running' );
+      $("#earth3").css( {'transition':'opacity 3s linear', 'opacity':'1'});
+      $("#slide12").css({'transform': 'scale(1.2)', 'transform': 'scale(1.2)', opacity: '1' } ); break;
+    case 180:
+      $("#slide12b").css({'transform': 'scale(1.2)', 'transform': 'scale(1.2)', opacity: '1' } ); break;
+    case 181:
+      $("#bird").css({top: '100px' } );
+      $("#bird").css( {'animation-play-state':'running','opacity':'1'} );
+      $("#crow").css( {'animation-play-state':'running','opacity':'1'} ); break;
+    case 184:
+      $("#slide12c").css({'transform': 'scale(1.2)', 'transform': 'scale(1.2)', opacity: '1' } );
+      $("#bird").css({top: '400px', 'z-index':'5000' } );
+      resetAnimation('bird'); resetAnimation('crow'); break;
+    case 185:
+       $("#slide12d").css({'transform': 'scale(1.2)', 'transform': 'scale(1.2)', opacity: '1' } ); break;   
+    case 187:
+      $("#cloudsContainer").css( {'transition':'opacity 3s linear', 'opacity':'1'});
+      $("#moonContainer").css( {'transition':'opacity 3s linear', 'opacity':'1'});
+      SwitchImages('earth1','3s',1,'earth2','1s',0);
+      $("#earthContainer").css( {'transition':'opacity 3s linear', 'opacity':'1'});
+      $('.slidesScene5').fadeTo(500,0); break; //using jQuery which queues fade out nicely 
+    case 190: // verse 1 repeat
+      $("#earth3").css( {'transition':'opacity 3s linear', 'opacity':'0'});
+      $('#lyrics').text('Yah, someone from the other side');
+      changeLyrics('3s'); break;
+    case 191:
+      $("#sun").css( 'animation-play-state', 'running' );
+      $("#moon").css( 'animation-play-state', 'running' ); break;
+    case 192:
+      spaceShips('spaceship1','-200'); break;
+    case 193:
+      $('#lyrics').text('is trying to steal this night away');
+      changeLyrics('4s'); break;
+    case 196:
+      spaceShips('spaceship2','1200'); break;
+    case 197:
+      $('#lyrics').text('They just lassoed the moon');
+      changeLyrics('3s'); break;
+    case 199:
+      resetAnimation('lasso');
+      $("#lasso").css( {'animation-play-state':'running'} ); break;   
+    case 200:
+      $('#lyrics').text("They're trying to haul her away");
+      changeLyrics('4s');
+        spaceShips('spaceship1','-200'); break;
+    case 203:
+      $("#cloudsContainer").css( {'transition':'opacity 3s linear', 'opacity':'0'});
+      SwitchImages('earth1','1s',0,'earth2','1s',0); break;
+    case 204:
+      $('#lyrics').text("They'll try to blind you with their daylight");
+      changeLyrics('4s'); break;
+     case 205:
+      resetAnimation('tvY'); resetAnimation('tvX');
+      $("#tvContainer").css( {'transition':'opacity 1s linear', 'opacity':'1'});
+      $("#tvY").css( 'animation-play-state', 'running' );
+      $("#tvX").css( 'animation-play-state', 'running' );
+      resetAnimation('xray');
+      $("#xray").css( 'animation-play-state', 'running' ).data('run','true'); break;
+    case 206:
+      $("#daylight").css( {'transition':'opacity 1s linear', 'opacity':'1'}); break;
+    case 207:
+      $("#daylight").css( {'transition':'opacity 2s linear', 'opacity':'0'});
+      $('#skylineNight').css( {'transition':'top 3s, opacity 8s','top':'160px', 'opacity': '1'});
+      $("#earthContainer").css( {'transition':'opacity 5s linear', 'opacity':'0'}); break;
+    case 208:
+      $('#lyrics').text("They seems to come around every half day");
+      changeLyrics('3s'); break;   
+    case 211:
+      $("#girl").css( {'transition':'opacity 3s linear', 'opacity':'1'});
+      $("#sunSymbol").css( {'transition':'opacity 1s linear', 'opacity':'1'});
+      $("#sunSymbol").css( 'animation-play-state', 'running' );
+      $('#lyrics').text("Yah, someone from the other side, tryin' to steal this night away");
+      changeLyrics('10s'); break;   
+    case 215:
+       resetAnimation('rocket');
+       $("#rocket").css( 'animation-play-state', 'running' ); break;
+    case 222: //song ending
+      spaceShips('spaceship2','1200');
+      $('#lyrics').text("Tryin' to steal this night away");
+      changeLyrics('7s'); break; 
+    case 229:
+      resetAnimation('rocket');
+      spaceShips('spaceship1','-200');
+      spaceShips('spaceship2','1200');
+      $("#rocket").css( 'animation-play-state', 'running' );
+      $('#lyrics').text("Tryin' to steal this night away");
+      changeLyrics('7s'); break; 
+    case 236:
+      $("#skylineNight").css( {'transition':'opacity 3s linear', 'opacity':'0'});
+      $('#lyrics').text("And do you fear the darkness");
+      changeLyrics('3s'); break;
+    case 237:
+      $("#moonContainer").css( {'transition':'opacity 2s linear', 'opacity':'0'});
+      $("#earthshadow").css( {'transition':'opacity 2s linear', 'opacity':'1'});
+      $("#sunSymbol").css( {'transition':'opacity 3s linear', 'opacity':'0'}); break;  
+    case 239:
+      $('#lyrics').text("at the end of each day");
+      changeLyrics('7s'); break;  
+    case 255:
+       $('#lyrics').text(" ");
+       changeLyrics('5s'); break;    
+ }
+}
+</script>
+</head>
+
+<body onclick="$('#keyboard').focus();">
+
+<div id="controls" onselectstart="return false;">
+  <div id="playBtn"></div>
+  <div id="seekslider"><div id="playhead"></div></div>
+  <div id="timebox">
+    <span id="curtimetext">00:00</span> / <span id="durtimetext">00:00</span>
+  </div>
+  <div id="mutebtn"></div>
+  <div id="volumeslider"></div>
+</div>
+
+<div id="VideoFrame" class="centerDiv">
+<div id="stars"></div>
+<div id="cloudsContainer">
+  <div id="clouds"></div>
+</div>
+<div id="moonContainer" class="centerDiv">
+  <div id="moon"></div>
+  <div id="sun"></div>
+</div>
+<div id="earthContainer" data-run="false">
+  <div id="earth1"></div>
+  <div id="earth2"></div>
+</div>
+<div id="lasso" class="lasso"></div>
+<div id="easternWay"></div>
+<div id="skylineNight"></div>
+<div id="earlyMorning"></div>
+<div id="halfDay"></div>
+<div id="sunSymbol"></div>
+<div id="daylight"></div>
+<div id="halfWorld"></div>
+<div id="xray" class="centerDiv fade"></div>
+<div id="earthshadow"></div>
+<div id="rocket" class="flyRight"></div>
+<div id="girl"></div>
+<div id="spaceship1"></div>
+<div id="spaceship2"></div>
+<div id= "pulseStar1" class="pulseStars"></div>
+<div id= "pulseStar2" class="pulseStars"></div>
+<div id="tvContainer" class="centerDiv"><div id="tvX" class="centerDiv"><div id="tvY" class="centerDiv"></div></div></div>
+<div id="bird"><div id="crow" class="crow"></div></div>
+<img id="slide1" class="slidesScene1" src="slide1.jpg">
+<img id="slide1b" class="slidesScene1" src="slide1b.jpg">
+<img id="slide1c" class="slidesScene1" src="slide1c.jpg">
+
+<img id="slide2" class="slidesScene1" src="slide2.jpg">
+<img id="slide2b" class="slidesScene1" src="slide2b.jpg">
+
+<img id="slide3" class="slidesScene1" src="slide3.jpg">
+<img id="slide3b" class="slidesScene1" src="slide3b.jpg">
+<img id="slide3c" class="slidesScene1" src="slide3c.jpg">
+
+<img id="slide4" class="slidesScene2" src="slide4.jpg">
+<img id="slide4b" class="slidesScene2" src="slide4b.jpg">
+<img id="slide4c" class="slidesScene2" src="slide4c.jpg">
+<img id="slide5" class="slidesScene2" src="slide5.jpg">
+<img id="slide5b" class="slidesScene2" src="slide5b.jpg">
+<img id="slide6b" class="slidesScene2" src="slide6b.jpg">
+<img id="slide6c" class="slidesScene2" src="slide6c.jpg">
+
+<img id="slide7" class="slidesScene3" src="slide7.jpg">
+<img id="slide7b" class="slidesScene3" src="slide7b.jpg">
+<img id="slide7c" class="slidesScene3" src="slide7c.jpg">
+<img id="slide7d" class="slidesScene3" src="slide7d.jpg">
+<img id="slide7e" class="slidesScene3" src="slide7e.jpg">
+<img id="slide7f" class="slidesScene3" src="slide7f.jpg">
+<img id="slide7g" class="slidesScene3" src="slide7g.jpg">
+<img id="slide7h" class="slidesScene3" src="slide7h.jpg">
+
+<img id="slide8" class="slidesScene4" src="slide8.jpg">
+<img id="slide9" class="slidesScene4" src="slide9.jpg">
+<img id="slide10" class="slidesScene4" src="slide10.jpg">
+<img id="slide11" class="slidesScene4" src="slide11.jpg">
+
+<img id="earth3" class="earth3" src="earth3.png">
+<img id="slide12" class="slidesScene5" src="slide12.jpg">
+<img id="slide12b" class="slidesScene5" src="slide12b.jpg">
+<img id="slide12c" class="slidesScene5" src="slide12c.jpg">
+<img id="slide12d" class="slidesScene5" src="slide12d.jpg">
+
+<div id="spot1" class="spotlights"></div>
+<div id="spot2" class="spotlights"></div>
+<div id="spot3" class="spotlights"></div>
+
+<div id="lyrics"></div>
+<div id="BigPlayBtn" class="centerDiv" onclick="playPause();"></div>
+</div>
+
+</body>
+</html>
